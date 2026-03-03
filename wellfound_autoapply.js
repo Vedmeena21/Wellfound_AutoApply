@@ -26,47 +26,22 @@
   // CONFIG -- Update this section with your own details
   // ============================================================
   const CONFIG = {
-    // Your basic details (used in the cover letter template)
     name: "Your Full Name",
     college: "Your College Name (Graduating Month Year)",
     currentRole: "Your Current Role (e.g. Software Developer Intern at XYZ)",
 
-    // Job title keywords -- script will only apply to roles matching at least one of these
+    // Role keywords used to confirm a title looks like a job title (not a company name)
     targetRoleTitles: [
-      "software engineer",
-      "sde",
-      "software developer",
-      "backend engineer",
-      "full stack engineer",
-      "associate engineer",
-      "junior engineer",
-      "junior developer",
-      "engineer i",
-      "sde-1",
-      "sde 1",
+      "engineer", "developer", "sde", "software", "backend",
+      "frontend", "full stack", "fullstack", "associate", "junior",
     ],
 
-    // Title keywords to skip -- roles containing any of these will be ignored
+    // Roles to always skip -- senior / managerial titles only
     excludedTitles: [
-      "senior",
-      "staff",
-      "principal",
-      "lead",
-      "manager",
-      "director",
-      "vp",
-      "head of",
-      "architect",
-      "10+",
-      "8+",
-      "7+",
-      "5+",
+      "senior", "staff", "principal", "lead", "manager",
+      "director", "vp", "head of", "architect",
     ],
 
-    // Maximum years of experience a job can require -- jobs requiring more will be skipped
-    maxYOE: 2,
-
-    // Your profile links (shown in the cover letter)
     github: "https://github.com/YOUR_USERNAME",
     linkedin: "https://www.linkedin.com/in/YOUR_USERNAME",
     portfolio: "https://your-portfolio.vercel.app",
@@ -109,43 +84,33 @@ Best,
 ${CONFIG.name}`;
 
   // ============================================================
-  // ROLE FILTER -- Determines whether a job card is worth applying to
+  // ROLE FILTER -- Only skips clearly senior/managerial roles.
+  // If the job title cannot be confidently read, the job is let
+  // through so nothing is accidentally missed.
   // ============================================================
   const isRelevantJob = (jobCardEl) => {
+    // Use the most specific selector first; fall back to data-test="JobListing" text
     const titleEl =
       jobCardEl.querySelector('[data-test="JobTitle"]') ||
-      jobCardEl.querySelector("h2") ||
-      jobCardEl.querySelector("h3") ||
-      jobCardEl.querySelector('[class*="title"]');
+      jobCardEl.querySelector('[class*="jobTitle"]') ||
+      jobCardEl.querySelector('[class*="job-title"]') ||
+      jobCardEl.querySelector('[class*="role"]');
 
-    const title = (titleEl?.innerText || "").toLowerCase();
+    const title = (titleEl?.innerText || "").toLowerCase().trim();
 
-    // If title cannot be read, let it through
-    if (!title) return true;
+    // If we cannot read a title (or what we read looks like a company name --
+    // i.e. it has no spaces and no common role word), let it through.
+    const looksLikeRoleTitle =
+      title.includes(" ") ||
+      CONFIG.targetRoleTitles.some((kw) => title.includes(kw));
 
-    // Skip if any excluded keyword is found in the title
+    if (!title || !looksLikeRoleTitle) return true;
+
+    // Only block roles that are explicitly senior / managerial
     const isExcluded = CONFIG.excludedTitles.some((kw) => title.includes(kw.toLowerCase()));
     if (isExcluded) {
-      console.log(`Skipping excluded role: "${titleEl?.innerText}"`);
+      console.log(`Skipping senior/managerial role: "${titleEl?.innerText}"`);
       return false;
-    }
-
-    // Skip if no target keyword matches the title
-    const isTarget = CONFIG.targetRoleTitles.some((kw) => title.includes(kw.toLowerCase()));
-    if (!isTarget) {
-      console.log(`Skipping non-target role: "${titleEl?.innerText}"`);
-      return false;
-    }
-
-    // Skip if the job card mentions a YOE requirement higher than maxYOE
-    const cardText = (jobCardEl?.innerText || "").toLowerCase();
-    const yoeMatch = cardText.match(/(\d+)\+?\s*(years?|yrs?|yoe)/);
-    if (yoeMatch) {
-      const requiredYOE = parseInt(yoeMatch[1]);
-      if (requiredYOE > CONFIG.maxYOE) {
-        console.log(`Skipping ${requiredYOE}+ YOE role: "${titleEl?.innerText}"`);
-        return false;
-      }
     }
 
     return true;
