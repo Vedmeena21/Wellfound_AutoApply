@@ -1,0 +1,12 @@
+# Never commit resumes or personal documents
+*.pdf
+*.doc
+*.docx
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
