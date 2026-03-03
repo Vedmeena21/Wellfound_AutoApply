@@ -1,12 +1,7 @@
 // ============================================================
 //  Wellfound Auto-Apply Script
-//  Target: SDE-1 / Junior / Associate Engineer roles (0-2 YOE)
-//
-//  BEFORE RUNNING:
-//  1. Update the CONFIG section with your details
-//  2. Update the applicationText with your own cover letter
-//  3. Paste the entire script into the browser console on
-//     https://wellfound.com/jobs and press Enter
+//  ⚠️  BEFORE RUNNING: Update the CONFIG section below
+//      with YOUR details. Do NOT use someone else's info.
 // ============================================================
 
 (async () => {
@@ -23,108 +18,143 @@
   };
 
   // ============================================================
-  // CONFIG -- Update this section with your own details
+  // 🔧 CONFIG — CHANGE THIS TO YOUR PROFILE
   // ============================================================
   const CONFIG = {
+    // --- Your Details ---
     name: "Your Full Name",
     college: "Your College Name (Graduating Month Year)",
     currentRole: "Your Current Role (e.g. Software Developer Intern at XYZ)",
 
-    // Role keywords used to confirm a title looks like a job title (not a company name)
+    // --- Target Roles (script will SKIP jobs that don't match) ---
+    // Add keywords that should appear in the job title
     targetRoleTitles: [
-      "engineer", "developer", "sde", "software", "backend",
-      "frontend", "full stack", "fullstack", "associate", "junior",
+      "software engineer",
+      "sde",
+      "software developer",
+      "backend engineer",
+      "full stack engineer",
+      "associate engineer",
+      "junior engineer",
+      "junior developer",
+      "engineer i",
+      "sde-1",
+      "sde 1",
     ],
 
-    // Roles to always skip -- senior / managerial titles only
+    // --- Jobs to SKIP (even if title matches) ---
     excludedTitles: [
-      "senior", "staff", "principal", "lead", "manager",
-      "director", "vp", "head of", "architect",
+      "senior",
+      "staff",
+      "principal",
+      "lead",
+      "manager",
+      "director",
+      "vp",
+      "head of",
+      "architect",
+      "10+",
+      "8+",
+      "7+",
+      "5+",
     ],
 
+    // --- Max YOE accepted (jobs requiring more will be skipped) ---
+    // Reads the job card's experience text and skips if > this value
+    maxYOE: 2,
+
+    // --- Your Links ---
     github: "https://github.com/YOUR_USERNAME",
     linkedin: "https://www.linkedin.com/in/YOUR_USERNAME",
     portfolio: "https://your-portfolio.vercel.app",
   };
 
   // ============================================================
-  // COVER LETTER -- Replace the placeholder lines with your content
+  // 📝 COVER LETTER — CHANGE THIS TO YOUR OWN TEXT
   // ============================================================
   const applicationText = `Hi,
 
-I am ${CONFIG.name}, a final-year B.Tech (CSE) student at ${CONFIG.college}, currently working as a ${CONFIG.currentRole}.
+I'm ${CONFIG.name}, a final-year B.Tech (CSE) student at ${CONFIG.college}, currently working as a ${CONFIG.currentRole}.
 
-Here is a quick snapshot of what I bring:
+Here's a quick snapshot of what I bring:
 
-[POINT 1 -- Describe your strongest experience]
-[POINT 2 -- Second strongest point]
-[POINT 3 -- Notable project or AI/ML work]
-[POINT 4 -- Any other relevant experience]
+[POINT 1 — Your strongest experience, e.g. "Built and secured 10+ production REST APIs using Java and Spring Boot"]
+[POINT 2 — Second strongest, e.g. "Designed PostgreSQL schemas with 8+ normalized tables"]
+[POINT 3 — AI/ML or notable project, e.g. "Built LLM chatbot using RAG and LangChain"]
+[POINT 4 — Any other relevant experience]
 
 Tech Stack:
-  - Backend: [Your backend skills]
-  - Frontend: [Your frontend skills]
-  - Databases: [Your database skills]
-  - Cloud/DevOps: [Cloud and DevOps tools]
+  • Backend: [Your backend skills]
+  • Frontend: [Your frontend skills]
+  • Databases: [Your DB skills]
+  • Cloud/DevOps: [Cloud tools you use]
 
 Achievements:
-  - [Competitive programming rank or rating]
-  - [Number of DSA problems solved]
-  - [Any certifications]
+  • [Competitive programming rank or rating]
+  • [LeetCode / coding problems solved]
+  • [Any certifications]
 
-Links:
+🔗 Links:
   GitHub: ${CONFIG.github}
   LinkedIn: ${CONFIG.linkedin}
   Portfolio: ${CONFIG.portfolio}
 
-I am actively looking for full-time SDE-1 / Junior Engineer roles. As a fresher with strong internship experience, I am eager to learn fast and contribute meaningfully from day one.
+I'm actively looking for full-time SDE-1 / Junior Engineer roles. As a fresher with strong internship experience, I'm eager to grow fast and contribute meaningfully from day one.
 
 Looking forward to hearing from you!
 Best,
 ${CONFIG.name}`;
 
   // ============================================================
-  // ROLE FILTER -- Only skips clearly senior/managerial roles.
-  // If the job title cannot be confidently read, the job is let
-  // through so nothing is accidentally missed.
+  // 🔍 ROLE FILTER — Checks if a job card is relevant
   // ============================================================
   const isRelevantJob = (jobCardEl) => {
-    // Use the most specific selector first; fall back to data-test="JobListing" text
     const titleEl =
       jobCardEl.querySelector('[data-test="JobTitle"]') ||
-      jobCardEl.querySelector('[class*="jobTitle"]') ||
-      jobCardEl.querySelector('[class*="job-title"]') ||
-      jobCardEl.querySelector('[class*="role"]');
+      jobCardEl.querySelector('h2') ||
+      jobCardEl.querySelector('h3') ||
+      jobCardEl.querySelector('[class*="title"]');
 
-    const title = (titleEl?.innerText || "").toLowerCase().trim();
+    const title = (titleEl?.innerText || "").toLowerCase();
+    if (!title) return true; // can't determine — let it through
 
-    // If we cannot read a title (or what we read looks like a company name --
-    // i.e. it has no spaces and no common role word), let it through.
-    const looksLikeRoleTitle =
-      title.includes(" ") ||
-      CONFIG.targetRoleTitles.some((kw) => title.includes(kw));
-
-    if (!title || !looksLikeRoleTitle) return true;
-
-    // Only block roles that are explicitly senior / managerial
+    // Skip if excluded keywords found in title
     const isExcluded = CONFIG.excludedTitles.some((kw) => title.includes(kw.toLowerCase()));
     if (isExcluded) {
-      console.log(`Skipping senior/managerial role: "${titleEl?.innerText}"`);
+      console.log(`%c⏭️ Skipping senior/irrelevant role: "${titleEl?.innerText}"`, "color: gray");
       return false;
+    }
+
+    // Must match at least one target role keyword
+    const isTarget = CONFIG.targetRoleTitles.some((kw) => title.includes(kw.toLowerCase()));
+    if (!isTarget) {
+      console.log(`%c⏭️ Skipping non-target role: "${titleEl?.innerText}"`, "color: gray");
+      return false;
+    }
+
+    // Check YOE if mentioned in the card
+    const cardText = (jobCardEl?.innerText || "").toLowerCase();
+    const yoeMatch = cardText.match(/(\d+)\+?\s*(years?|yrs?|yoe)/);
+    if (yoeMatch) {
+      const requiredYOE = parseInt(yoeMatch[1]);
+      if (requiredYOE > CONFIG.maxYOE) {
+        console.log(`%c⏭️ Skipping ${requiredYOE}+ YOE role: "${titleEl?.innerText}"`, "color: gray");
+        return false;
+      }
     }
 
     return true;
   };
 
   // ============================================================
-  // RELOCATION HANDLER -- Fills the location dropdown if it appears
+  // 📍 Handle relocation dropdown if it appears in the modal
   // ============================================================
   const handleRelocationQuestion = async () => {
     try {
       const firstRadio = document.querySelector('input[name="qualification.location.action"]');
       if (firstRadio) {
         firstRadio.click();
-        console.log("Selected relocation option");
+        console.log("%c📍 Selected relocation option", "color: orange");
       }
 
       const dropdownContainer = document.querySelector(
@@ -132,50 +162,48 @@ ${CONFIG.name}`;
       );
       if (dropdownContainer) {
         dropdownContainer.click();
-        console.log("Opened location dropdown");
+        console.log("%c🔽 Opened location dropdown", "color: orange");
         await delay(500);
 
         const firstOption = document.querySelector(".select__menu-list div");
         if (firstOption) {
           firstOption.click();
-          console.log("Selected first location option");
+          console.log("%c🌍 Selected first location in dropdown", "color: orange");
         }
 
         await delay(2000);
         return true;
       } else {
-        console.log("Location dropdown not found");
+        console.log("%c⚠️ Location dropdown not found", "color: gray");
       }
     } catch (err) {
-      console.log("Error while handling relocation question:", err);
+      console.log("%c❌ Error handling relocation question", "color: red", err);
     }
     return false;
   };
 
   // ============================================================
-  // SKILL QUESTIONS -- Selects an honest answer for radio questions
-  // For freshers: Intermediate (3 options) / Beginner (2 options)
+  // 🎯 Handle skill-level radio questions honestly
+  //    Fresher/SDE-1 target: Beginner (2-opt) / Intermediate (3-opt)
   // ============================================================
   const handleCustomQuestions = () => {
     const allGroups = document.querySelectorAll('[data-test^="RadioGroup-customQuestionAnswers"]');
     allGroups.forEach((group) => {
       const options = group.querySelectorAll('input[type="radio"]');
       if (options.length === 3) {
-        options[1].click(); // middle option -- typically "Intermediate"
-        console.log("Selected Intermediate for skill question");
+        options[1].click(); // Intermediate — honest for fresher with internship experience
+        console.log("%c🎯 Selected Intermediate for 3-option skill question", "color: dodgerblue");
       } else if (options.length === 2) {
-        options[0].click(); // first option -- typically "Beginner"
-        console.log("Selected first option for skill question");
+        options[0].click(); // Beginner — safe and honest for SDE-1 fresher
+        console.log("%c🎯 Selected Beginner for 2-option question", "color: dodgerblue");
       } else {
-        console.log("Unexpected number of radio options:", options.length);
+        console.log("%c⚠️ Unexpected number of options: " + options.length, "color: gray");
       }
     });
   };
 
   // ============================================================
-  // TEXTAREA FILL -- Works with React-controlled inputs
-  // Standard textarea.value assignment does not trigger React onChange,
-  // so the native setter is used to force the event properly.
+  // ✏️ Fill textarea — works with React-controlled inputs
   // ============================================================
   const fillTextarea = (textarea, text) => {
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -188,7 +216,7 @@ ${CONFIG.name}`;
   };
 
   // ============================================================
-  // STATE
+  // ⚙️ Main batch processor
   // ============================================================
   let appliedCount = 0;
   let skippedCount = 0;
@@ -196,28 +224,23 @@ ${CONFIG.name}`;
   let scrollCount = 0;
   let processedButtons = new Set();
 
-  console.log("Wellfound Auto-Apply started");
-  console.log(`Targeting SDE-1 / Junior / Associate roles -- max ${CONFIG.maxYOE} YOE`);
+  console.log(`%c🚀 Wellfound Auto-Apply Started`, "color: green; font-weight: bold; font-size: 14px;");
+  console.log(`%c🎯 Targeting: SDE-1 / Junior / Associate roles (0–${CONFIG.maxYOE} YOE)`, "color: #9C27B0; font-weight: bold;");
 
-  // ============================================================
-  // BATCH PROCESSOR -- Processes all visible job cards on the page
-  // ============================================================
   const processBatch = async () => {
+    // Get all job cards visible on the page
     const allCards = [...document.querySelectorAll('[data-test="StartupResult"]')];
     const allButtons = [...document.querySelectorAll('button[data-test="LearnMoreButton"]')];
 
+    // Pair each button with its card for relevance filtering
     let eligibleButtons = [];
     allButtons.forEach((btn, idx) => {
       if (processedButtons.has(btn)) return;
-      const card =
-        allCards[idx] ||
-        btn.closest('[data-test="StartupResult"]') ||
-        btn.parentElement;
-
+      const card = allCards[idx] || btn.closest('[data-test="StartupResult"]') || btn.parentElement;
       if (isRelevantJob(card)) {
         eligibleButtons.push(btn);
       } else {
-        processedButtons.add(btn);
+        processedButtons.add(btn); // mark as processed so we don't re-check
         filteredCount++;
       }
     });
@@ -232,23 +255,27 @@ ${CONFIG.name}`;
       await delay(500);
 
       learnMoreBtn.click();
-      console.log(`[${appliedCount + skippedCount + 1}] Opening job modal...`);
+      console.log(
+        `%c🔍 [${appliedCount + skippedCount + 1}] Opened job modal...`,
+        "color: blue"
+      );
 
       const applyBtn = await waitForElement(
         'button[data-test="JobDescriptionSlideIn--SubmitButton"]'
       );
-
       if (!applyBtn) {
-        console.log("Modal did not load -- skipping");
+        console.log("%c❌ Modal failed to load — skipping", "color: red");
         skippedCount++;
         continue;
       }
 
-      // If apply is disabled, attempt to handle the questionnaire then skip
+      // If apply button is disabled, try to handle questionnaire or skip
       if (applyBtn.disabled) {
-        const filled = await handleRelocationQuestion();
-        if (!filled) {
-          console.log("Apply button disabled and no questionnaire handled -- skipping");
+        const isFormFilled = await handleRelocationQuestion();
+        if (isFormFilled) {
+          console.log("%c✅ Relocation questionnaire filled", "color: green");
+        } else {
+          console.log("%c⏭️ Apply button disabled — skipping this job", "color: gray");
         }
         const closeBtn = await waitForElement('button[data-test="closeButton"]');
         if (closeBtn) closeBtn.click();
@@ -257,32 +284,35 @@ ${CONFIG.name}`;
         continue;
       }
 
-      // Answer any skill-level radio questions
+      // Handle custom skill-level questions
       handleCustomQuestions();
 
       // Fill the cover letter
       const textarea = document.querySelector("textarea:not([disabled])");
       if (textarea) {
         fillTextarea(textarea, applicationText);
-        console.log("Cover letter filled");
+        console.log(`%c📝 Cover letter autofilled`, "color: purple");
       } else {
-        console.log("No textarea found -- submitting without cover letter");
+        console.log("%c⚠️ No textarea found — applying without cover letter", "color: orange");
       }
 
       await delay(1500);
 
-      // Submit the application
+      // Click Apply
       applyBtn.click();
-      await delay(4000); // intentional delay to avoid rate-limiting
+      await delay(4000); // generous delay — avoids "access denied" rate-limiting
 
       appliedCount++;
-      console.log(`[${appliedCount}] Applied at ${new Date().toLocaleTimeString()}`);
+      console.log(
+        `%c✅ [${appliedCount}] Applied at ${new Date().toLocaleTimeString()}`,
+        "color: teal; font-weight: bold;"
+      );
 
-      // Close the modal
+      // Close modal
       const closeBtn = await waitForElement('button[data-test="closeButton"]');
       if (closeBtn) {
         closeBtn.click();
-        console.log("Modal closed");
+        console.log("%c❎ Modal closed", "color: crimson");
       }
 
       await delay(2000);
@@ -292,14 +322,17 @@ ${CONFIG.name}`;
   };
 
   // ============================================================
-  // SCROLL LOOP -- Scrolls to load lazy-loaded job cards
+  // 📜 Scroll loop — loads all jobs on the page
   // ============================================================
   const maxScrolls = 15;
   while (scrollCount < maxScrolls) {
     const found = await processBatch();
     if (!found) {
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-      console.log(`Scrolling to load more jobs (${scrollCount + 1}/${maxScrolls})...`);
+      console.log(
+        `%c📜 Scrolling to load more jobs... (${scrollCount + 1}/${maxScrolls})`,
+        "color: darkcyan"
+      );
       scrollCount++;
       await delay(3000);
     } else {
@@ -308,11 +341,11 @@ ${CONFIG.name}`;
   }
 
   // ============================================================
-  // SUMMARY
+  // 🎉 Final Summary
   // ============================================================
-  console.log("--- Run complete ---");
-  console.log(`Applied  : ${appliedCount}`);
-  console.log(`Skipped  : ${skippedCount}`);
-  console.log(`Filtered : ${filteredCount}  (senior / irrelevant roles excluded)`);
-  console.log(`Total    : ${appliedCount + skippedCount + filteredCount}`);
+  console.log("%c🎉 Auto-apply finished!", "color: limegreen; font-size: 16px; font-weight: bold;");
+  console.log(`%c📌 Jobs Applied  : ${appliedCount}`, "color: #4CAF50; font-weight: bold;");
+  console.log(`%c📌 Jobs Skipped  : ${skippedCount}`, "color: #FF9800; font-weight: bold;");
+  console.log(`%c📌 Jobs Filtered : ${filteredCount} (senior/irrelevant roles)`, "color: #9E9E9E; font-weight: bold;");
+  console.log(`%c📌 Total Seen    : ${appliedCount + skippedCount + filteredCount}`, "color: #2196F3; font-weight: bold;");
 })();

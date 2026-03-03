@@ -1,14 +1,14 @@
 # Wellfound Auto-Apply Script
 
-Automates job applications on [Wellfound (AngelList)](https://wellfound.com/jobs). Applies to all visible job listings and skips only clearly senior or managerial roles (Senior, Staff, Lead, Manager, etc.).
+Automates job applications on [Wellfound (AngelList)](https://wellfound.com/jobs).
 
-Built for freshers and early-career engineers. Setup takes under 5 minutes.
+Works for **any role, any experience level** — fresher, mid-level, or senior. You control what gets applied to and what gets skipped through a simple config. Setup takes under 5 minutes.
 
 ---
 
 ## Disclaimer
 
-This script is for personal use only. Update the CONFIG and cover letter with your own details before running. Do not use someone else's information. Use responsibly — the script includes built-in delays to reduce the risk of rate-limiting.
+This script is for personal use only. Update the `CONFIG` and cover letter with your own details before running. Do not use someone else's information. Use responsibly — the script includes built-in delays to reduce the risk of rate-limiting.
 
 ---
 
@@ -22,7 +22,7 @@ Go to [wellfound.com](https://wellfound.com) and sign up. Using **Continue with 
 
 ## Step 2 — Complete Your Profile
 
-Go to [wellfound.com/u/edit](https://wellfound.com/u/edit). Fill in your name, headline, college, experience, and links. A complete profile gets more visibility.
+Go to [wellfound.com/u/edit](https://wellfound.com/u/edit). Fill in your name, headline, experience, education, and links. A complete profile increases visibility to recruiters.
 
 ![Profile edit page](screenshots/03_profile_edit.png)
 
@@ -30,7 +30,7 @@ Go to [wellfound.com/u/edit](https://wellfound.com/u/edit). Fill in your name, h
 
 ## Step 3 — Set Job Preferences
 
-On the same profile edit page, scroll to the **Preferences** section. Set your role, job type (Full-time), location, and expected salary.
+On the same profile edit page scroll to **Preferences**. Set your role, job type, location, and expected salary so Wellfound shows you the right listings.
 
 ![Job preferences](screenshots/05_job_preferences.png)
 
@@ -38,41 +38,48 @@ On the same profile edit page, scroll to the **Preferences** section. Set your r
 
 ## Step 4 — Check Your Public Profile
 
-Visit your public profile to confirm everything looks good before applying anywhere.
+Visit your public profile to confirm it looks complete before running the script.
 
 ![Public profile](screenshots/06_profile_complete.png)
 
 ---
 
-## Step 5 — Open the Jobs Page and Apply Filters
+## Step 5 — Open the Jobs Page and Set Filters
 
-Go to [wellfound.com/jobs](https://wellfound.com/jobs). Use the filters to narrow down by role, experience, and location before running the script.
+Go to [wellfound.com/jobs](https://wellfound.com/jobs). Use the filters to narrow by role, experience level, and location. The script applies to everything visible on the filtered page.
 
-![Jobs page with filters](screenshots/07_jobs_page.png)
+![Jobs page](screenshots/07_jobs_page.png)
+
+Apply filters based on your target — for example:
+
+![Filtering jobs by role and experience](screenshots/04_filter_jobs.png)
 
 ---
 
 ## Step 6 — Customize the Script
 
-Open `wellfound_autoapply.js` and update the `CONFIG` block at the top with your details:
+Open `wellfound_autoapply.js` and update the `CONFIG` block at the top:
 
 ```javascript
 const CONFIG = {
   name: "Your Full Name",
-  college: "Your College Name (Graduating Month Year)",
-  currentRole: "Your Current Role at Company",
+  role: "Your Target Role (e.g. Software Engineer)",
+  currentRole: "Your Current Role (e.g. Software Developer Intern at XYZ)",
   github: "https://github.com/YOUR_USERNAME",
   linkedin: "https://www.linkedin.com/in/YOUR_USERNAME",
-  portfolio: "https://your-portfolio.vercel.app",
+  portfolio: "https://your-portfolio.com",
 
-  // Used only to detect if a card shows a role title vs a company name
-  // Add/remove keywords to match your target roles
-  targetRoleTitles: [
-    "engineer", "developer", "sde", "software", "backend",
-    "frontend", "full stack", "fullstack", "associate", "junior",
-  ],
-
-  // Roles containing any of these will always be skipped
+  // Titles containing any of these words will be skipped.
+  // Customize based on what you want to filter out.
+  //
+  // Fresher / Junior:
+  //   ["senior", "staff", "principal", "lead", "manager", "director", "vp", "head of", "architect"]
+  //
+  // Mid-level:
+  //   ["manager", "director", "vp", "head of"]
+  //
+  // Apply to everything:
+  //   []
   excludedTitles: [
     "senior", "staff", "principal", "lead", "manager",
     "director", "vp", "head of", "architect",
@@ -80,17 +87,17 @@ const CONFIG = {
 };
 ```
 
-Then update the cover letter (the `applicationText` variable) by replacing all `[POINT X -- ...]` lines with your own experience.
+Then update the `applicationText` cover letter below it — replace every `[placeholder]` with your own content.
 
 ---
 
 ## Step 7 — Open the Browser Console
 
-Press **`Cmd + Option + J`** on macOS or **`Ctrl + Shift + J`** on Windows. Click the **Console** tab.
+Press **`Cmd + Option + J`** on macOS or **`Ctrl + Shift + J`** on Windows. Click the **Console** tab in the panel that opens.
 
 ![DevTools console open](screenshots/08_devtools_console.png)
 
-> If Chrome shows a paste warning, type `allow pasting` into the console and press Enter first.
+> If Chrome shows a paste warning, type `allow pasting` in the console and press Enter first.
 
 ---
 
@@ -106,29 +113,36 @@ Do not switch tabs or scroll manually while the script is running.
 
 ## Step 9 — Watch It Run
 
-The script will open each job modal, fill your cover letter, and click Apply. When it finishes you'll see a summary:
+The script opens each job modal, checks the title against your exclusion list, fills the cover letter, and submits. When done:
 
 ```
 Wellfound Auto-Apply started
+Skipping roles containing: senior, staff, principal, lead, manager...
 [1] Opening job modal...
 Cover letter filled
 [1] Applied at 10:23:04
 Modal closed
 [2] Opening job modal...
+Skipping excluded role: "Senior Software Engineer"
 ...
 --- Run complete ---
-Applied  : 24
-Skipped  : 3
-Total    : 27
+Applied : 24
+Skipped : 6
+Total   : 30
 ```
 
 *(Screenshots 11 and 12 — script running and final summary — coming soon)*
 
 ---
 
-## How the Filter Works
+## How the Exclusion Filter Works
 
-The script only skips roles where the job title **contains a senior/managerial keyword** (Senior, Staff, Lead, Manager, Director, VP, etc.). Everything else — including roles where the title cannot be confidently read — is applied to. This ensures nothing gets accidentally missed.
+The filter reads the **job title directly from the open modal** — not from the job card. This is more reliable because card elements often show company names instead of role titles.
+
+- If a title contains any word from `excludedTitles`, the modal is closed and the job is skipped.
+- If `excludedTitles` is set to `[]`, the script applies to every visible job without filtering anything.
+
+This means you stay in full control of what gets applied to.
 
 ---
 
@@ -137,10 +151,11 @@ The script only skips roles where the job title **contains a senior/managerial k
 | Problem | Fix |
 |---------|-----|
 | Chrome shows paste warning | Type `allow pasting` in the console first |
-| Cover letter not filling | Confirm you saved the script after editing — the React-compatible native setter is already used |
-| "Access denied" after a few jobs | Wait 5-10 minutes and re-run |
-| Script finishes too quickly | Increase `maxScrolls` from `15` to `25` near the bottom of the script |
+| Cover letter not filling | Confirm you saved the script — the React-compatible native setter is already built in |
+| "Access denied" after a few jobs | Wellfound is rate-limiting. Wait 5-10 minutes and re-run |
+| Script ends before processing all jobs | Increase `maxScrolls` from `15` to `25` near the bottom of the script |
 | Apply button always disabled | Your Wellfound profile may be incomplete — go back to Steps 2-4 |
+| A role I wanted to skip slipped through | Add that keyword to `excludedTitles` in `CONFIG` |
 
 ---
 
@@ -153,4 +168,4 @@ Wellfound_AutoApply/
 └── README.md                 This file
 ```
 
-> The resume file is excluded from this repository via .gitignore. Never commit a personal resume to a public repository.
+> The resume file is excluded via `.gitignore`. Never commit a personal resume to a public repository.
