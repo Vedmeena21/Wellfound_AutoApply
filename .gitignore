@@ -1,3 +1,6 @@
+# Personal auto-apply script -- not for public repo
+ved_autoapply.js
+
 # Never commit resumes or personal documents
 *.pdf
 *.doc

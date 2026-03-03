@@ -1,333 +1,348 @@
-# 🚀 Wellfound Auto-Apply Script
+# Wellfound Auto-Apply Script
 
-> Automate job applications on [Wellfound (AngelList)](https://wellfound.com/jobs) for **SDE-1 / Junior / Associate Engineer** roles (0–2 YOE).  
-> Built for freshers and early-career engineers. **Takes ~30 seconds to set up.**
+A browser console script that automates job applications on [Wellfound (AngelList)](https://wellfound.com/jobs).
 
----
-
-## ⚠️ Important Disclaimer
-
-- This script is for **personal use only**.
-- You **must customize** the `CONFIG` and cover letter with **your own details** before running.
-- Do **not** use someone else's profile text or links.
-- Use responsibly — excessive automation may get your account flagged by Wellfound.
+Designed for **freshers and early-career engineers** targeting SDE-1, Junior, and Associate Engineer roles with 0-2 years of experience. The script filters out senior/irrelevant roles automatically and submits a customized cover letter for every eligible application.
 
 ---
 
-## 📋 Table of Contents
+## Disclaimer
 
-1. [What This Script Does](#-what-this-script-does)
-2. [Step 1 — Create a Wellfound Account](#-step-1--create-a-wellfound-account)
-3. [Step 2 — Complete Your Profile](#-step-2--complete-your-profile)
-4. [Step 3 — Customize the Script](#-step-3--customize-the-script)
-5. [Step 4 — Open the Right Jobs Page](#-step-4--open-the-right-jobs-page)
-6. [Step 5 — Open Browser Console](#-step-5--open-browser-console)
-7. [Step 6 — Run the Script](#-step-6--run-the-script)
-8. [What You'll See in Console](#-what-youll-see-in-console)
-9. [Role & YOE Filtering — How It Works](#-role--yoe-filtering--how-it-works)
-10. [Troubleshooting](#-troubleshooting)
-11. [FAQ](#-faq)
+- This script is for personal use only.
+- You must update the `CONFIG` block and cover letter with **your own details** before running.
+- Do not use someone else's profile information.
+- Use responsibly. Wellfound may rate-limit or flag accounts that apply in high volumes very quickly — the script includes built-in delays to reduce this risk.
 
 ---
 
-## ✅ What This Script Does
+## Table of Contents
+
+1. [What the Script Does](#what-the-script-does)
+2. [Step 1 — Create a Wellfound Account](#step-1--create-a-wellfound-account)
+3. [Step 2 — Complete Your Profile](#step-2--complete-your-profile)
+4. [Step 3 — Customize the Script](#step-3--customize-the-script)
+5. [Step 4 — Open the Jobs Page](#step-4--open-the-jobs-page)
+6. [Step 5 — Open the Browser Console](#step-5--open-the-browser-console)
+7. [Step 6 — Run the Script](#step-6--run-the-script)
+8. [Console Output Reference](#console-output-reference)
+9. [How Role and YOE Filtering Works](#how-role-and-yoe-filtering-works)
+10. [Troubleshooting](#troubleshooting)
+11. [FAQ](#faq)
+12. [Repository Structure](#repository-structure)
+
+---
+
+## What the Script Does
 
 | Feature | Details |
 |---------|---------|
-| 🎯 **Role Filtering** | Only applies to SDE-1, Junior, Associate, Software Engineer roles |
-| 🚫 **Excludes Senior Roles** | Automatically skips Senior, Staff, Principal, Lead, Manager titles |
-| 📅 **YOE Filter** | Skips jobs requiring more than 2 years of experience |
-| 📝 **Auto Cover Letter** | Fills your customized cover letter in every application |
-| 🎚️ **Skill Questions** | Answers skill-level radio questions (Intermediate for freshers) |
-| 📍 **Relocation Questions** | Handles location preference dropdowns automatically |
-| 📜 **Auto Scroll** | Scrolls the page to load all available job listings |
-| 📊 **Summary Report** | Shows Applied / Skipped / Filtered counts at the end |
+| Role filtering | Only applies to SDE-1, Junior, Associate, and Software Engineer roles |
+| Senior role exclusion | Automatically skips Senior, Staff, Principal, Lead, Manager, Director titles |
+| YOE filter | Skips jobs that require more than 2 years of experience (configurable) |
+| Cover letter | Fills your customized cover letter in every application automatically |
+| Skill questions | Answers skill-level radio questions (Intermediate for 3-option, Beginner for 2-option) |
+| Relocation questions | Handles location preference dropdowns if they appear |
+| Auto scroll | Scrolls the page to load all lazy-loaded job listings |
+| Summary report | Logs Applied / Skipped / Filtered counts at the end of each run |
 
 ---
 
-## 👤 Step 1 — Create a Wellfound Account
+## Step 1 — Create a Wellfound Account
 
-1. Go to **[wellfound.com](https://wellfound.com)**
-2. Click **"Sign Up"** in the top right corner
+1. Open [wellfound.com](https://wellfound.com) in Google Chrome.
 
-   > 💡 **Tip:** Use **"Continue with LinkedIn"** — it auto-fills your profile from LinkedIn, saving you time.
+![Wellfound homepage](screenshots/01_wellfound_homepage.png)
 
-3. Select **"I'm a candidate looking for a job"**
-4. Verify your email if required
+2. Click **Sign Up** in the top-right corner.
 
----
+> Tip: Using "Continue with LinkedIn" auto-fills your profile from LinkedIn and saves significant time.
 
-## 🧑‍💼 Step 2 — Complete Your Profile
+3. Select **"I am a candidate looking for a job"** when prompted.
+4. Verify your email address if required.
 
-A complete profile = more applications accepted. Fill **every** field.
-
-### 2.1 — Basic Info
-- Go to **[wellfound.com/u/edit](https://wellfound.com/u/edit)**
-- Fill in:
-  - ✅ Full Name
-  - ✅ Profile photo
-  - ✅ One-line headline (e.g. `"Final Year CS Student | Java · Spring Boot · React"`)
-  - ✅ Location (your city)
-  - ✅ LinkedIn URL
-  - ✅ GitHub URL
-  - ✅ Portfolio URL (if any)
-
-### 2.2 — Work Experience
-- Click **"Add Position"**
-- Add your **internships** with title, company, dates, and 2–3 bullet points of what you did
-- Example:
-  ```
-  Software Developer Intern — Mercer | Mettl (Jan 2026 – Present)
-  • Built 10+ REST APIs using Java & Spring Boot secured with Spring Security
-  • Designed PostgreSQL schemas across 8+ normalized tables
-  ```
-
-### 2.3 — Education
-- Add your **college**, degree, branch, and graduation year
-
-### 2.4 — Skills
-- Add **all relevant skills** — these are used for matching:
-  ```
-  Java, Spring Boot, Spring Security, Python, FastAPI, React.js,
-  PostgreSQL, MySQL, AWS, Docker, Git, LangChain, REST API, Node.js
-  ```
-
-### 2.5 — Upload Resume
-- Click **"Resume"** section → **"Upload Resume"**
-- Upload your latest PDF resume
-- ⚠️ **Do NOT commit your resume to this GitHub repo**
-
-### 2.6 — Job Preferences
-| Field | What to Fill |
-|-------|-------------|
-| **Job Type** | Full-time |
-| **Role** | Software Engineer |
-| **Experience Level** | Entry Level / Junior |
-| **Location** | Your preferred cities (e.g. Bangalore, Gurgaon, Hyderabad) + Remote |
-| **Expected Salary** | ₹12–18 LPA (or your target range) |
-| **Availability** | Immediate / Your joining date |
-
-### 2.7 — Verify Profile Completeness
-- Your profile progress bar should show **100%**
-- Go to [wellfound.com/u/YOUR_USERNAME](https://wellfound.com/u/) to preview how recruiters see you
+![Sign up page](screenshots/02_signup_page.png)
 
 ---
 
-## 🔧 Step 3 — Customize the Script
+## Step 2 — Complete Your Profile
 
-> ⚠️ **This is the most important step. Do NOT skip this.**
+A complete profile increases your visibility to recruiters. Fill every section before running the script.
 
-Open `wellfound_autoapply.js` and find the `CONFIG` section at the top:
+### 2.1 Basic Information
+
+Go to [wellfound.com/u/edit](https://wellfound.com/u/edit) and fill in:
+
+- Full name
+- Profile photo
+- One-line headline (example: `Final Year CS Student | Java · Spring Boot · React`)
+- City/location
+- LinkedIn URL
+- GitHub URL
+- Portfolio URL (if available)
+
+![Profile edit page](screenshots/03_profile_edit.png)
+
+### 2.2 Work Experience
+
+Click **Add Position** and add your internships with:
+- Job title, company name, and date range
+- 2-3 bullet points describing what you built or contributed
+
+### 2.3 Education
+
+Add your college, degree, branch, and expected graduation year.
+
+### 2.4 Skills
+
+Add all skills relevant to your stack. These are used by Wellfound for matching. Example:
+
+```
+Java, Spring Boot, Spring Security, Python, FastAPI, React.js,
+PostgreSQL, MySQL, AWS, Docker, Git, LangChain, REST API, Node.js
+```
+
+![Skills section](screenshots/04_skills_section.png)
+
+### 2.5 Upload Resume
+
+Navigate to the Resume section in your profile and upload your latest PDF resume.
+
+> Do not commit your resume to this repository or any public repository.
+
+### 2.6 Job Preferences
+
+| Field | Recommended Value |
+|-------|------------------|
+| Job Type | Full-time |
+| Role | Software Engineer |
+| Experience Level | Entry Level / Junior |
+| Location | Your preferred cities + Remote |
+| Expected Salary | Your target range |
+| Availability | Immediate or your expected joining date |
+
+![Job preferences section](screenshots/05_job_preferences.png)
+
+### 2.7 Check Profile Completeness
+
+Your profile progress should be at 100% before running the script.
+Visit `wellfound.com/u/YOUR_USERNAME` to preview how recruiters see your profile.
+
+![Profile complete](screenshots/06_profile_complete.png)
+
+---
+
+## Step 3 — Customize the Script
+
+> This is the most important step. Do not skip it.
+
+Open `wellfound_autoapply.js` in any text editor and update the `CONFIG` block at the top of the file:
 
 ```javascript
 const CONFIG = {
-  name: "Your Full Name",                        // ← Change this
-  college: "Your College (Graduating Month Year)", // ← Change this
-  currentRole: "Your Current Role at XYZ",        // ← Change this
+  name: "Your Full Name",                            // replace
+  college: "Your College (Graduating Month Year)",   // replace
+  currentRole: "Your Current Role at Company",       // replace
 
-  targetRoleTitles: [                             // ← Add/remove role keywords
+  targetRoleTitles: [                                // add/remove as needed
     "software engineer", "sde", "backend engineer", ...
   ],
 
-  excludedTitles: [                               // ← Roles to skip
+  excludedTitles: [                                  // roles to always skip
     "senior", "staff", "principal", ...
   ],
 
-  maxYOE: 2,                                      // ← Max years of experience required
+  maxYOE: 2,                                         // max experience required
 
-  github: "https://github.com/YOUR_USERNAME",     // ← Change this
-  linkedin: "https://www.linkedin.com/in/YOUR_USERNAME", // ← Change this
-  portfolio: "https://your-portfolio.vercel.app", // ← Change this
+  github: "https://github.com/YOUR_USERNAME",        // replace
+  linkedin: "https://www.linkedin.com/in/YOUR_USERNAME", // replace
+  portfolio: "https://your-portfolio.vercel.app",    // replace
 };
 ```
 
-Then update the **cover letter** (the `applicationText` variable) below the CONFIG:
+Then scroll down and replace the cover letter placeholders in `applicationText`:
 
 ```javascript
-const applicationText = `Hi,
-
-I'm ${CONFIG.name}, a final-year B.Tech student at ...
-
-[POINT 1 — Replace with your strongest experience]
-[POINT 2 — Replace with your second strongest]
-...
+[POINT 1 -- Describe your strongest experience]
+[POINT 2 -- Second strongest point]
+[POINT 3 -- Notable project]
+[POINT 4 -- Any other relevant experience]
 ```
 
-**Replace all `[POINT X — ...]` placeholders with your actual experience.**
+Replace each `[POINT X -- ...]` line with a real sentence from your own background.
 
 ---
 
-## 🌐 Step 4 — Open the Right Jobs Page
+## Step 4 — Open the Jobs Page
 
-Go to this URL in **Google Chrome** (filtered for SDE-1 / fresher roles):
+Open this URL in Google Chrome after logging in:
 
 ```
 https://wellfound.com/jobs?role=software-engineer&jobType=full-time
 ```
 
-Or manually filter on [wellfound.com/jobs](https://wellfound.com/jobs):
+Or filter manually on [wellfound.com/jobs](https://wellfound.com/jobs):
 
 | Filter | Value |
 |--------|-------|
-| **Role** | Software Engineer / Backend Engineer |
-| **Job Type** | Full-time |
-| **Experience** | 0–2 years |
-| **Location** | Your preferred cities or Remote |
+| Role | Software Engineer / Backend Engineer |
+| Job Type | Full-time |
+| Experience | 0-2 years |
+| Location | Your preferred cities or Remote |
 
-Make sure you are **logged in** and can see job cards on the page before proceeding.
+Make sure job cards are visible on the page before proceeding.
+
+![Jobs page with filters applied](screenshots/07_jobs_page_filtered.png)
 
 ---
 
-## 🛠️ Step 5 — Open Browser Console
+## Step 5 — Open the Browser Console
 
-### On macOS (Chrome):
-Press: **`Cmd ⌘ + Option ⌥ + J`**
+**macOS (Chrome):** `Cmd + Option + J`
 
-### On Windows (Chrome):
-Press: **`Ctrl + Shift + J`**
+**Windows (Chrome):** `Ctrl + Shift + J`
 
-The DevTools panel opens at the bottom of your browser:
+The DevTools panel opens at the bottom of the browser. Click the **Console** tab.
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│  Elements   Console   Sources   Network   Performance  ...     │
-├────────────────────────────────────────────────────────────────┤
-│                                                                │
-│  >  |  ← Click here — this is where you paste the script      │
-│                                                                │
-└────────────────────────────────────────────────────────────────┘
-```
+![DevTools console tab](screenshots/08_devtools_console.png)
 
-> ✅ Make sure you're on the **Console** tab (not Elements, Sources, etc.)
+### Allow Pasting (First Time Only)
 
-### ⚠️ Allow Pasting (First Time Only)
+Chrome blocks paste by default. If you see a paste warning, type exactly the following into the console and press Enter:
 
-Chrome blocks pasting by default. When you first try to paste, you may see:
-
-> *"Warning: Don't paste code you don't understand into the DevTools Console..."*
-
-If you see this, **type exactly this** into the console and press Enter:
 ```
 allow pasting
 ```
-You'll see a confirmation. Now you can paste the script.
+
+You will see a confirmation message. After that, paste the script normally.
+
+![Allow pasting prompt](screenshots/09_allow_pasting.png)
 
 ---
 
-## ▶️ Step 6 — Run the Script
+## Step 6 — Run the Script
 
-1. Open `wellfound_autoapply.js` in any text editor or VS Code
-2. Press **`Cmd + A`** (Mac) / **`Ctrl + A`** (Windows) to select all
-3. Press **`Cmd + C`** / **`Ctrl + C`** to copy
-4. Click inside the Console (next to the `>` prompt)
-5. Press **`Cmd + V`** / **`Ctrl + V`** to paste
-6. Press **`Enter`**
+1. Open `wellfound_autoapply.js` in a text editor.
+2. Select all (`Cmd + A` on macOS / `Ctrl + A` on Windows).
+3. Copy (`Cmd + C` / `Ctrl + C`).
+4. Click inside the browser console next to the `>` prompt.
+5. Paste (`Cmd + V` / `Ctrl + V`).
+6. Press `Enter`.
 
-> ⚠️ **Do NOT** switch tabs, click elsewhere, or scroll manually while the script runs.
+Do not switch tabs, scroll manually, or click elsewhere while the script is running.
+
+![Script pasted in console](screenshots/10_script_pasted.png)
 
 ---
 
-## 📺 What You'll See in Console
+## Console Output Reference
+
+Once the script is running, you will see output like this:
 
 ```
-🚀 Wellfound Auto-Apply Started
-🎯 Targeting: SDE-1 / Junior / Associate roles (0–2 YOE)
+Wellfound Auto-Apply started
+Targeting SDE-1 / Junior / Associate roles -- max 2 YOE
 
-⏭️ Skipping senior/irrelevant role: "Senior Backend Engineer"
-⏭️ Skipping 5+ YOE role: "Staff Software Engineer"
-🔍 [1] Opened job modal...
-📝 Cover letter autofilled
-🎯 Selected Intermediate for 3-option skill question
-✅ [1] Applied at 10:23:04
-❎ Modal closed
+Skipping excluded role: "Senior Backend Engineer"
+Skipping 5+ YOE role: "Staff Software Engineer"
+[1] Opening job modal...
+Cover letter filled
+Selected Intermediate for skill question
+[1] Applied at 10:23:04
+Modal closed
 
-🔍 [2] Opened job modal...
-📝 Cover letter autofilled
-✅ [2] Applied at 10:23:11
-❎ Modal closed
+[2] Opening job modal...
+Cover letter filled
+[2] Applied at 10:23:11
+Modal closed
 
-📜 Scrolling to load more jobs... (1/15)
+Scrolling to load more jobs (1/15)...
 
-🎉 Auto-apply finished!
-📌 Jobs Applied  : 18
-📌 Jobs Skipped  : 3
-📌 Jobs Filtered : 11 (senior/irrelevant roles)
-📌 Total Seen    : 32
+--- Run complete ---
+Applied  : 18
+Skipped  : 3
+Filtered : 11  (senior / irrelevant roles excluded)
+Total    : 32
 ```
+
+![Script running in console](screenshots/11_script_running.png)
+
+![Final summary in console](screenshots/12_final_summary.png)
 
 ---
 
-## 🎯 Role & YOE Filtering — How It Works
+## How Role and YOE Filtering Works
 
-The script reads **each job card's title and text** before opening the modal:
+The script reads each job card's title and text **before opening the modal**, so it never wastes time on irrelevant roles.
 
-### ✅ Roles it WILL apply to:
-- Software Engineer, SDE, SDE-1, SDE 1
+### Roles the script will apply to (default):
+- Software Engineer, SDE, SDE-1, Software Developer
 - Backend Engineer, Full Stack Engineer
 - Associate Engineer, Junior Engineer, Junior Developer
 - Engineer I
 
-### ❌ Roles it WILL skip automatically:
-- Senior / Staff / Principal / Lead Engineer
+### Roles the script will skip automatically:
+- Senior / Staff / Principal / Lead / Architect
 - Engineering Manager, Director, VP, Head of Engineering
-- Any role mentioning 5+, 7+, 8+, 10+ years
+- Any role whose card text mentions 5+, 7+, 8+, or 10+ years
 
-### 📅 YOE Filter:
-If the job card text contains something like `"3+ years"` or `"5 years experience"`, and that number is **greater than `maxYOE` (default: 2)**, the job is automatically skipped.
+### YOE check:
+If a job card contains text like `"3+ years required"`, and that number exceeds `maxYOE` (default: 2), the job is skipped without opening the modal.
+
+You can adjust `targetRoleTitles`, `excludedTitles`, and `maxYOE` in the `CONFIG` block to match your own preferences.
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
-| **"allow pasting" warning** | Type `allow pasting` in console first, then paste |
-| **Cover letter not filling** | The React fix is already built in — make sure you saved your edits to the script |
-| **"Access Denied" after ~5 jobs** | Wellfound rate-limits bots. Wait 5–10 mins, then re-run |
-| **Modal not loading** | Slow internet — increase `waitForElement` timeout from `5000` to `8000` |
-| **Script stops early** | Increase `maxScrolls` from `15` to `25` if you have many jobs |
-| **All jobs showing as filtered** | Check your `targetRoleTitles` — add more keywords matching your search results |
-| **Apply button always disabled** | Your Wellfound profile may be incomplete — go back to Step 2 |
+| Chrome shows paste warning | Type `allow pasting` in the console first, then paste the script |
+| Cover letter is not filling | The React-compatible native setter is already used in the script — confirm your edits were saved |
+| "Access denied" after a few jobs | Wellfound is rate-limiting. Wait 5-10 minutes then run the script again |
+| Modal not loading | Slow network. Increase the `waitForElement` timeout from `5000` to `8000` in the script |
+| Script finishes before all jobs are processed | Increase `maxScrolls` from `15` to `25` at the bottom of the script |
+| All jobs being filtered | Check your `targetRoleTitles` — add more keywords that match the titles visible on your search results page |
+| Apply button always disabled | Your Wellfound profile is likely incomplete — go back to Step 2 |
 
 ---
 
-## ❓ FAQ
+## FAQ
 
-**Q: Will this get my account banned?**  
-A: Wellfound doesn't explicitly ban for this, but using large delays (already built in) reduces risk. Don't run it for 100+ jobs in one session.
+**Will this get my account banned?**
+Wellfound does not explicitly ban for console-based automation. The built-in 4-second delay between applications reduces the risk significantly. Avoid running it for more than 50-60 jobs in a single session.
 
-**Q: What if a job requires answering custom questions (not just radio buttons)?**  
-A: The script will skip jobs where the Apply button remains disabled after handling the questionnaire.
+**What happens if a job has custom text questions (not radio buttons)?**
+The script will skip jobs where the Apply button remains disabled after attempting to handle the questionnaire. Text-input questions are not currently handled.
 
-**Q: Can I run this on multiple pages?**  
-A: Yes — navigate to the next page and run the script again. `processedButtons` resets each run.
+**Can I run this on multiple pages?**
+Yes. Navigate to the next page or change your filters and run the script again. The `processedButtons` set resets with each new run.
 
-**Q: Should I change `maxYOE`?**  
-A: If you have 1+ years of internship experience, keeping it at `2` is fine. Don't set it higher than `3` for early-career targeting.
+**Should I change `maxYOE`?**
+2 is a reasonable ceiling for freshers and early-career candidates. Setting it higher risks matching roles that expect more experience than you have.
 
-**Q: The script applied to a senior role I didn't want!**  
-A: The job title on the card may not have had a keyword like "senior". You can add more keywords to `excludedTitles` in `CONFIG`.
+**A senior role slipped through — why?**
+The job card may not have used a keyword that is in `excludedTitles`. Add the specific keyword you saw to the `excludedTitles` array in `CONFIG`.
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 Wellfound_AutoApply/
-├── wellfound_autoapply.js   # The main auto-apply script (customize before use)
-└── README.md                # This file
+├── wellfound_autoapply.js    Main script — customize CONFIG and cover letter before use
+├── screenshots/              Screenshots used in this README
+└── README.md                 This file
 ```
 
-> ⚠️ **Resume is intentionally NOT included in this repo.** Never commit your personal resume to a public GitHub repository.
+> The resume file is intentionally excluded from this repository via .gitignore.
+> Never commit a personal resume to a public repository.
 
 ---
 
-## 🌟 If This Helped You
+## Contributing
 
-- ⭐ Star this repo
-- 🍴 Fork it and customize it for your own profile
-- 🐛 Found a bug? Open an issue!
+If you find a bug or a selector has changed on Wellfound, open an issue or submit a pull request. Include the console output and a description of what you expected to happen.
 
 ---
 
-*Made for early-career engineers grinding the job hunt. Good luck! 💪*
+*Built for early-career engineers navigating the job hunt.*
