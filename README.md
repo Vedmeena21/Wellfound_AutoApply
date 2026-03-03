@@ -44,13 +44,20 @@ Visit your public profile to confirm it looks complete before running the script
 
 ---
 
-## Step 5 — Open the Jobs Page and Set Filters
+## Step 5 — Search for Your Target Jobs and Set Filters
 
-Go to [wellfound.com/jobs](https://wellfound.com/jobs). Use the filters to narrow by role, experience level, and location. The script applies to everything visible on the filtered page.
+Go to [wellfound.com/jobs](https://wellfound.com/jobs). In the search bar, type the **role you are targeting** — for example `Software Engineer`, `Backend Developer`, `Full Stack Engineer`.
+
+Then use the filter panel on the left to narrow down further by:
+- **Experience level** (e.g. Entry Level, Mid Level)
+- **Location** (Remote, India, US, etc.)
+- **Job type** (Full-time)
+
+**Do this before running the script.** The script applies to everything visible on the page — so the more focused your filters, the better your results.
 
 ![Jobs page](screenshots/07_jobs_page.png)
 
-Apply filters based on your target — for example:
+Example — searching "Software Engineer" and filtering by experience level and location:
 
 ![Filtering jobs by role and experience](screenshots/04_filter_jobs.png)
 
@@ -113,25 +120,13 @@ Do not switch tabs or scroll manually while the script is running.
 
 ## Step 9 — Watch It Run
 
-The script opens each job modal, checks the title against your exclusion list, fills the cover letter, and submits. When done:
+The script opens each job modal, fills the cover letter, and submits. You can watch the progress live in the console.
 
-```
-Wellfound Auto-Apply started
-Skipping roles containing: senior, staff, principal, lead, manager...
-[1] Opening job modal...
-Cover letter filled
-[1] Applied at 10:23:04
-Modal closed
-[2] Opening job modal...
-Skipping excluded role: "Senior Software Engineer"
-...
---- Run complete ---
-Applied : 24
-Skipped : 6
-Total   : 30
-```
+![Script running in console](screenshots/11_script_running.png)
 
-*(Screenshots 11 and 12 — script running and final summary — coming soon)*
+When all jobs on the page are processed:
+
+![Final summary in console](screenshots/12_final_summary.png)
 
 ---
 
